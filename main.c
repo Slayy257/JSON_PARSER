@@ -13,6 +13,68 @@ typedef struct
     t_object obj;
 } t_json_object;
 
+int get_json_integer(t_json_object* json, const char* item_name) {
+    
+    for (int i = 0; i < sizeof(json) / 2; i++) {
+        const t_json_object json_obj = json[i];
+
+        if (!strcmp(json_obj.item_name, item_name)) {
+            if (strcmp(json_obj.obj.val_type, "integer"))
+                return -1;
+                
+            return atoi(json_obj.obj.value); 
+        }
+    }
+
+    return -1;
+}
+double get_json_double(t_json_object* json, const char* item_name) {
+    for (int i = 0; i < sizeof(json) / 2; i++) {
+        const t_json_object json_obj = json[i];
+
+        if (!strcmp(json_obj.item_name, item_name)) {
+            if (strcmp(json_obj.obj.val_type, "double"))
+                return -1;
+                
+            return atof(json_obj.obj.value); 
+        }
+    }
+
+    return -1;
+}
+const char* get_json_string(t_json_object* json, const char* item_name) {
+    for (int i = 0; i < sizeof(json) / 2; i++) {
+        const t_json_object json_obj = json[i];
+
+        if (!strcmp(json_obj.item_name, item_name)) {
+            if (strcmp(json_obj.obj.val_type, "string"))
+                return "NULL";
+
+            return strdup(json_obj.obj.value); 
+        }
+    }
+
+    return "NULL";
+}
+bool get_json_boolean(t_json_object* json, const char* item_name) {
+    for (int i = 0; i < sizeof(json) / 2; i++) {
+        const t_json_object json_obj = json[i];
+
+        if (!strcmp(json_obj.item_name, item_name)) {
+            if (strcmp(json_obj.obj.val_type, "boolean"))
+                return false;
+
+            if (!strcmp(json_obj.obj.value, "true"))
+                return true;
+            else
+                return false;
+
+        }
+    }
+
+    return false;
+}
+
 t_object get_value_from_item(const char* data, const char* item_name) {
     t_object obj;
 
@@ -35,7 +97,7 @@ t_object get_value_from_item(const char* data, const char* item_name) {
         const char next_c = data[item_index + 1]; 
         const size_t value_len = strlen(obj.value);
 
-        if (strcmp(obj.val_type, "integer") && c == '.') {
+        if (!strcmp(obj.val_type, "integer") && c == '.') {
             strcpy_s(obj.val_type, 20, "double");
             continue;
         }
@@ -60,7 +122,16 @@ t_object get_value_from_item(const char* data, const char* item_name) {
             continue;
         }
 
-        if (c == ',' || c == '\n' || c == '}' && started_reading_value) {
+        if (c == ',' || c == '}' && started_reading_value) {
+
+            if (!strcmp(obj.val_type, "string")) {
+                if (c == ',' && data[item_index - 1] != '"') {
+                    obj.value[value_len] = c;
+                    item_index++;
+                    continue;
+                }
+            }
+            
             if (c == data[strlen(data) - 1] || next_c == '"')
                 break;
             else
@@ -199,9 +270,13 @@ int main(int, char **)
     t_json_object* json = NULL; 
     parse(json_file, &json);
 
-    for (int i = 0; i < sizeof(json) / 2; i++) {
-         printf_s("[+] Found object: name = %s, type = %s, value = %s\n", json[i].item_name, json[i].obj.val_type, json[i].obj.value);
-    }
+    int age = get_json_integer(json, "age");
+    const char* name = get_json_string(json, "name");
+    bool gay = get_json_boolean(json, "gay");
+
+    printf_s("%s's age is %i\n", name, age);
+    
+    gay ? printf_s("HE'S GAY\n") : printf_s("HE'S STRAIGHT\n");
 
     fclose(json_file);
     return 0;

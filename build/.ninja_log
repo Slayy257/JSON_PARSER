@@ -1,7 +1,3 @@
 # ninja log v5
-124	231	7424619880147839	json_parser.exe	3553aeb91a3d94c1
-15	124	7424619879117845	CMakeFiles/json_parser.dir/main.c.obj	50696f24a03f5d5
-12	335	7425196687738040	CMakeFiles/json_parser.dir/main.c.obj	50696f24a03f5d5
-336	577	7425196690128095	json_parser.exe	3553aeb91a3d94c1
-5	120	7425199461971190	CMakeFiles/json_parser.dir/main.c.obj	50696f24a03f5d5
-121	234	7425199463071227	json_parser.exe	3553aeb91a3d94c1
+127	235	7425467428396537	json_parser.exe	3553aeb91a3d94c1
+14	127	7425467427354709	CMakeFiles/json_parser.dir/main.c.obj	50696f24a03f5d5
